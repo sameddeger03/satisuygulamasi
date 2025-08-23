@@ -1,0 +1,124 @@
+#euSOTICDWXG2_to {
+    animation: euSOTICDWXG2_to__to 2500ms linear infinite normal forwards
+}
+
+@keyframes euSOTICDWXG2_to__to {
+    0% {
+        transform: translate(512px, 1451px)
+    }
+
+    20% {
+        transform: translate(512px, 1451px)
+    }
+
+    40% {
+        transform: translate(512px, 651px)
+    }
+
+    100% {
+        transform: translate(512px, 651px)
+    }
+}
+
+#euSOTICDWXG2 {
+    animation: euSOTICDWXG2_c_o 2500ms linear infinite normal forwards
+}
+
+@keyframes euSOTICDWXG2_c_o {
+    0% {
+        opacity: 1
+    }
+
+    80% {
+        opacity: 1
+    }
+
+    100% {
+        opacity: 0
+    }
+}
+
+#euSOTICDWXG7 {
+    animation: euSOTICDWXG7_c_o 2500ms linear infinite normal forwards
+}
+
+@keyframes euSOTICDWXG7_c_o {
+    0% {
+        opacity: 0
+    }
+
+    40% {
+        opacity: 0
+    }
+
+    60% {
+        opacity: 1
+    }
+
+    80% {
+        opacity: 1
+    }
+
+    100% {
+        opacity: 0
+    }
+}
+
+#euSOTICDWXG10_to {
+    animation: euSOTICDWXG10_to__to 2500ms linear infinite normal forwards
+}
+
+@keyframes euSOTICDWXG10_to__to {
+    0% {
+        transform: translate(512px, -221.333328px)
+    }
+
+    20% {
+        transform: translate(512px, 299px)
+    }
+
+    100% {
+        transform: translate(512px, 299px)
+    }
+}
+
+#euSOTICDWXG10 {
+    animation: euSOTICDWXG10_c_o 2500ms linear infinite normal forwards
+}
+
+@keyframes euSOTICDWXG10_c_o {
+    0% {
+        opacity: 1
+    }
+
+    80% {
+        opacity: 1
+    }
+
+    100% {
+        opacity: 0
+    }
+}
+
+@keyframes euSOTICDWXG26_tr__tr {
+    0% {
+        transform: translate(135px, 207px) rotate(720deg);
+        animation-timing-function: cubic-bezier(0.415, 0.08, 0.115, 0.955)
+    }
+
+    100% {
+        transform: translate(135px, 207px) rotate(486.233766deg)
+    }
+}
+
+
+@keyframes euSOTICDWXG27_tr__tr {
+    0% {
+        transform: translate(11px, 30px) rotate(-720deg);
+        animation-timing-function: cubic-bezier(0.415, 0.08, 0.115, 0.955)
+    }
+
+    100% {
+        transform: translate(11px, 30px) rotate(-486.233766deg)
+    }
+}

@@ -1,0 +1,111 @@
+body, html {
+    height:100%;
+    margin:0;
+    padding: 0;
+    overflow: hidden;
+}
+.unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.svg-btn {
+    position:relative;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+
+}
+
+
+@font-face {
+    font-family: Sono;
+    src: url(/fonts/Stormland.otf);
+}
+@font-face {
+    font-family: Poppins;
+    src: url(/fonts/Poppins-SemiBold.ttf);
+}
+@font-face {
+    font-family: Eyvindur;
+    src: url(/fonts/Eyvindur.ttf);
+}
+.btn {
+    font-family: Poppins, sans-serif;
+    text-transform: inherit !important;
+}
+
+.btn-label {
+    cursor: pointer;
+    border-radius: 3px;
+    color: #fff;
+    text-decoration: none !important;
+}
+.btn-label .ikon {
+    position: relative;
+    display: inline-block;
+    padding: 6px 12px;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 3px 0 0 3px;
+    height: 100%;
+}
+
+.btn-label div {
+    text-align: center;
+    width: 100%;
+
+}
+
+.btn-label .isim {
+    font-size: 22px;
+}
+
+.marka {
+
+    padding: 0;
+    text-align: center;
+}
+.marka .versiyon {
+    background: #1c1f23;
+    color: #fff;
+    border-radius: 3px 0 0 3px;
+}
+
+.marka .metin {
+    font-family: Sono, sans-serif;
+    font-size: 14px;
+    margin-right: 5px;
+}
+
+.saat {
+    font-family: Poppins, sans-serif;
+    text-align: center;
+    border: #6f42c1 solid 2px;
+    border-bottom: none !important;
+    border-radius: 3px 3px 0 0;
+}
+.tarih {
+    font-family: Poppins, sans-serif;
+    border: #6f42c1 solid 2px;
+    border-top: none !important;
+    border-radius: 0 0 3px 3px;
+    font-size: small;
+    padding: 3px;
+}
+.saat div {
+    background-clip: text;
+    background-image: linear-gradient(to right, #09f1b8, #00a2ff, #ff00d2, #fed90f);
+    color: #fff;
+    font-size: 4.5vmin;
+    font-weight: 700;
+    letter-spacing: calc(1em / 8);
+    padding: calc(calc(1em / 16) / 2);
+    -webkit-text-stroke-color: transparent;
+    -webkit-text-stroke-width: calc(1em / 16);
+}
+
+.saat * {
+    box-sizing: border-box;
+}

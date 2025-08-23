@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' http://*.rovave.com http://rovave.com; frame-src http://*.rovave.com http://rovave.com; "/>
+    <title>Uygulama Güncelleme</title>
+    <link rel="stylesheet" href="bootstrap.min.css" type="text/css">
+    <style>
+        #indirildi, #mevcut{
+            display: none;
+        }
+    </style>
+</head>
+<body class="vh-100">
+<div class="h-100 d-flex align-items-center justify-content-center">
+    <div class="text-center" id="kontrol">
+        <h1>Güncelleme Kontrol</h1>
+    </div>
+    <div class="text-center" id="mevcut">
+        <h1>Güncelleme Mevcut</h1>
+        <hr>
+        <h3><svg xmlns="http://www.w3.org/2000/svg" width="32px" height="32px" viewBox="0 0 200 200"><path fill="#0d6efd" stroke="#0d6efd" stroke-width="15" transform-origin="center" d="m148 84.7 13.8-8-10-17.3-13.8 8a50 50 0 0 0-27.4-15.9v-16h-20v16A50 50 0 0 0 63 67.4l-13.8-8-10 17.3 13.8 8a50 50 0 0 0 0 31.7l-13.8 8 10 17.3 13.8-8a50 50 0 0 0 27.5 15.9v16h20v-16a50 50 0 0 0 27.4-15.9l13.8 8 10-17.3-13.8-8a50 50 0 0 0 0-31.7Zm-47.5 50.8a35 35 0 1 1 0-70 35 35 0 0 1 0 70Z"><animateTransform type="rotate" attributeName="transform" calcMode="spline" dur="2" values="0;120" keyTimes="0;1" keySplines="0 0 1 1" repeatCount="indefinite"></animateTransform></path></svg> İndiriliyor...</h3>
+        <div class="progress" >
+            <div class="progress-bar" role="progressbar" style="width: 0;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+        </div>
+    </div>
+    <div class="text-center" id="indirildi">
+        <h1>Güncelleme Indirildi</h1>
+        <h3>Kurulum otomatik yapılacak.</h3>
+        <span>Lütfen uygulama yeniden başlayana kadar bekleyiniz...</span>
+    </div>
+</div>
+<script>
+    let lastDurum = 0;
+    if(typeof ipcRenderer === "undefined")
+        ipcRenderer = window.ipcRenderer;
+    function durum(i){
+        if(lastDurum === i ) return;
+        lastDurum = i;
+        document.getElementById("kontrol").style.display = "none";
+        document.getElementById("mevcut").style.display = "none";
+        document.getElementById("indirildi").style.display = "none";
+        switch (i) {
+            case 0:
+                document.getElementById("kontrol").style.display = "block";
+                break;
+            case 1:
+                document.getElementById("mevcut").style.display = "block";
+                break;
+            case 2:
+                document.getElementById("indirildi").style.display = "block";
+                break;
+        }
+    }
+    function ilerleme(yuzde){
+        durum(1);
+        yuzde = Math.floor(yuzde);
+        const progress = document.querySelector('.progress-bar');
+        progress.style.width = '' + yuzde + '%';
+        progress.textContent = '' + yuzde + '%';
+        progress.setAttribute('aria-valuenow', yuzde);
+    }
+    window.addEventListener('load', () => {
+        durum(0);
+        ipcRenderer.on('download-progress', (event, progressObj) => {
+            ilerleme(progressObj.percent);
+        });
+        ipcRenderer.on('update-downloaded', () => {
+            durum(2);
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+// @see https://www.electron.build/configuration/configuration
+{
+  "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
+  "asar": true,
+  "productName": "Rovave Satış Uygulaması",
+  "directories": {
+    "output": "release/${version}"
+  },
+  "files": [
+    "dist",
+    "dist-electron"
+  ],
+  "mac": {
+    "icon": "public/favicon.png",
+    "target": [
+      "dmg"
+    ],
+    "artifactName": "SatisUygulamasi-Mac-${version}-Installer.${ext}"
+  },
+  "win": {
+    "icon": "public/favicon.png",
+    "target": [
+      {
+        "target": "nsis",
+        "arch": [
+          "x64"
+        ]
+      }
+    ],
+    "artifactName": "SatisUygulamasi-Windows-${version}-Setup.${ext}"
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": false,
+    "allowToChangeInstallationDirectory": true,
+    "deleteAppDataOnUninstall": false
+  },
+  "linux": {
+    "icon": "public/favicon.png",
+    "target": [
+      "AppImage"
+    ],
+    "artifactName": "SatisUygulamasi-Linux-${version}.${ext}"
+  },
+  "publish": [
+    {
+      "provider": "generic",
+      "url": "http://apps.rovave.com/satisuygulamasi/guncelleme/"
+    }
+  ],
+  "extraMetadata": {
+    "disableWebInstaller": true
+  }
+}

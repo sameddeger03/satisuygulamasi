@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="d9452ba2-ab42-400d-8904-889b2babbc5a" name="Rovave" url="http://185.27.134.11">
+        <fileTransfer accessType="SFTP" host="rovave.com" port="22" sshConfigId="ad72a234-c6f7-4cd1-b065-a2236993bc08" sshConfig="root@rovave.com:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+      <webServer id="8bf92395-9824-4909-892c-a53cf67485e0" name="Rovave2" url="http://195.201.179.80">
+        <fileTransfer host="195.201.179.80" port="21">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

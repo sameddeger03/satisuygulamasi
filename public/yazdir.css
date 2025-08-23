@@ -1,0 +1,41 @@
+@media print {
+    strong {
+        text-align: center;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        font-size: 20px;
+        font-style: oblique;
+        text-decoration: underline;
+    }
+    table {
+        width: 100%;
+    }
+    tr, td, th {
+        text-align: left;
+    }
+    .d-flex {
+        display: flex;
+    }
+    .justify-content-between {
+        justify-content: space-between;
+    }
+    .col-1 {width: 8.33333%;} .col-2 {width: 16.66667%;} .col-3 {width: 25%;} .col-4 {width: 33.33333%;} .col-5 {width: 41.66667%;} .col-6 {width: 50%;} .col-7 {width: 58.33333%;} .col-8 {width: 66.66667%;} .col-9 {width: 75%;} .col-10 {width: 83.33333%;} .col-11 {width: 91.66667%;} .col-12 {width: 100%;}
+
+    .bolmebeni {
+        border: 1px solid black;
+        margin-top: 10px;
+        margin-bottom: 5px;
+        padding: 5px;
+    }
+
+    .header {
+        width: 98%;
+        font-size:20px;
+    }
+    @page {
+        size: A4;
+        margin: 8px 10px 8px 10px;
+    }
+}
+
+

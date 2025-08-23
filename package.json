@@ -1,0 +1,67 @@
+{
+  "name": "com.rovave.satisuygulamasi",
+  "version": "1.7.4",
+  "main": "dist-electron/main/index.js",
+  "description": "Küçük işletmeler için bir yazılım.",
+  "author": "Samed Değer <sameddeger03@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "debug": {
+    "env": {
+      "VITE_DEV_SERVER_URL": "http://127.0.0.1:3344/"
+    }
+  },
+  "scripts": {
+    "g": "cls && vite",
+    "k": "cls && tsc --build --clean && vue-tsc --noEmit && tsc --build --clean",
+    "o": "cls && vite build && electron-builder",
+    "t": "cls && rimraf release dist dist-electron",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^3.7.1",
+    "@types/bootstrap": "*",
+    "@types/luxon": "*",
+    "@vitejs/plugin-vue": "5.0.4",
+    "electron": "29.3.1",
+    "electron-builder": "^24.13.3",
+    "typescript": "5.5.4",
+    "vite": "^5.1.5",
+    "vite-plugin-electron": "0.28.4",
+    "vite-plugin-electron-renderer": "0.14.5",
+    "vite-tsconfig-paths": "*",
+    "vue": "^3.5.13",
+    "vue-tsc": "*"
+  },
+  "dependencies": {
+    "@popperjs/core": "*",
+    "@types/cli-color": "^2.0.6",
+    "animate.css": "*",
+    "axios": "^1.7.9",
+    "better-sqlite3": "10.1.0",
+    "bootstrap": "*",
+    "bootstrap-icons": "*",
+    "chart.js": "*",
+    "chartjs-adapter-luxon": "*",
+    "cli-color": "^2.0.4",
+    "dotenv": "*",
+    "electron-store": "*",
+    "electron-updater": "^6.3.9",
+    "is-online": "^11.0.0",
+    "knex": "*",
+    "luxon": "*",
+    "md5": "*",
+    "moment": "^2.30.1",
+    "node-fetch": "^3.3.2",
+    "node-machine-id": "*",
+    "notiwind": "*",
+    "ps-list": "^8.1.1",
+    "rimraf": "^6.0.1",
+    "v-calendar": "3.0.3",
+    "vue-router": "*",
+    "vue-to-print": "*",
+    "vuex": "*",
+    "winston": "*"
+  }
+}

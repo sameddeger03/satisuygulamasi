@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": { "@interfaces/*": ["interfaces/*"], "@kutuphane/*": ["kutuphane/*"] }
+  },
+  "include": ["vite.config.ts", "package.json", "electron"],
+}

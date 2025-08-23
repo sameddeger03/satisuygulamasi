@@ -1,0 +1,144 @@
+﻿import {app, BrowserWindow, shell, Menu, ipcMain, session, IpcMainEvent} from 'electron'
+import { fileURLToPath } from 'node:url'
+import path from 'node:path'
+import os from 'node:os'
+import Dinleme from "./dinleme";
+import {internet} from "./islemciler/internet";
+import vt from "./islemciler/veritabani";
+import fs from "node:fs";
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+process.env.APP_ROOT = path.join(__dirname, '../..')
+path.join(process.env.APP_ROOT, 'dist-electron');
+export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist')
+export const VITE_DEV_SERVER_URL = process.env.VITE_DEV_SERVER_URL
+process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
+    ? path.join(process.env.APP_ROOT, 'public')
+    : RENDERER_DIST
+
+let kilitli = true;
+const uygulama: Electron.App = app;
+let anaPencere: Electron.BrowserWindow | null = null
+let internetKontrol: internet;
+let veritabani: vt;
+let appYolu;
+let yedekYolu;
+let raporYolu;
+if (os.release().startsWith('6.1')) uygulama.disableHardwareAcceleration()
+if (process.platform === 'win32') uygulama.setAppUserModelId(process.env.ID)
+
+if (!uygulama.requestSingleInstanceLock()) {
+  uygulama.quit()
+  process.exit(0)
+}
+
+const preload = path.join(__dirname, '../preload/index.mjs');
+const bosHtml = path.join(RENDERER_DIST, 'bos.html');
+const indexHtml = path.join(RENDERER_DIST, 'index.html');
+const lockHtml = path.join(RENDERER_DIST, 'lock.html');
+let otoGiris = true;
+async function pencere() {
+  Menu.setApplicationMenu(null);
+  anaPencere = new BrowserWindow({
+    title: uygulama.getName(),
+    icon: path.join(process.env.VITE_PUBLIC, 'favicon.ico'),
+    webPreferences: {
+      preload
+    },
+    width: 500,
+    height: 500,
+    show: false,
+    frame: false,
+    titleBarStyle: 'hidden'
+  });
+  anaPencere.webContents.setWindowOpenHandler(({ url }) => {
+    if (url.startsWith('https:')) shell.openExternal(url)
+    return { action: 'deny' }
+  })
+
+  await session.defaultSession.clearStorageData();
+  appYolu = uygulama.getPath("documents")+"\\Satış Uygulaması";
+  if(fs.existsSync(appYolu)===false) fs.mkdirSync(yedekYolu);
+  yedekYolu = appYolu+"\\Yedekler";
+  if(fs.existsSync(yedekYolu)===false) fs.mkdirSync(yedekYolu);
+  raporYolu = appYolu+"\\Raporlar";
+  if(fs.existsSync(raporYolu)===false) fs.mkdirSync(raporYolu);
+  veritabani = new vt(path.join(process.env.VITE_PUBLIC, 'db.db'),yedekYolu);
+  internetKontrol = new internet();
+  internetKontrol.zamanla();
+
+  (new Dinleme()).basla(uygulama, anaPencere, veritabani);
+  await veritabani.baglan();
+  await veritabani.tablolaribagla();
+  kilitli = await veritabani.ayarlar.get("kilit");
+  uygulamayiBaslat().then();
+}
+async function uygulamayiBaslat() {
+  anaPencere.webContents.openDevTools({ mode: 'detach' });
+  if (VITE_DEV_SERVER_URL)
+    await anaPencere.loadURL(VITE_DEV_SERVER_URL+"bos.html");
+  else
+    await anaPencere.loadFile(bosHtml).then();
+  if(kilitli){
+    anaPencere.setSize(500,500);
+    anaPencere.unmaximize();
+    if (VITE_DEV_SERVER_URL)
+      await anaPencere.loadURL(VITE_DEV_SERVER_URL+"lock.html");
+    else
+      await anaPencere.loadFile(lockHtml).then();
+    anaPencere.show();
+  }else {
+    anaPencere.maximize();
+    if (VITE_DEV_SERVER_URL)
+      await anaPencere.loadURL(VITE_DEV_SERVER_URL);
+    else
+      await anaPencere.loadFile(indexHtml).then();
+    anaPencere.show();
+  }
+}
+
+let girilensifre = null;
+ipcMain.on("kilitle", async (event) => {
+  kilitli = true;
+  otoGiris = false;
+  uygulamayiBaslat().then();
+})
+ipcMain.on("kilit", async (event) => {
+  event.reply("kilit-response", [(await veritabani.ayarlar.get("sifre"))!="",otoGiris]);
+})
+ipcMain.on("devamet", async (event) => {
+  if(girilensifre!=null || (await veritabani.ayarlar.get("sifre"))=="") {
+    kilitli = false;
+    uygulamayiBaslat().then();
+  }
+})
+ipcMain.on("sifre", async (event, sifre: string) => {
+  const dogrulama = (await veritabani.ayarlar.get("sifre"))==sifre;
+  if(dogrulama)girilensifre = sifre;
+  else girilensifre = null;
+  event.reply("sifre-response", dogrulama);
+})
+ipcMain.handle("versiyon", async (event: IpcMainEvent) => {
+  return app.getVersion();
+})
+uygulama.whenReady().then(pencere)
+
+uygulama.on('window-all-closed', () => {
+  anaPencere = null;
+  if (process.platform !== 'darwin') uygulama.quit()
+})
+
+uygulama.on('second-instance', () => {
+  if (anaPencere) {
+    if (anaPencere.isMinimized()) anaPencere.restore()
+    anaPencere.focus()
+  }
+})
+
+uygulama.on('activate', () => {
+  const allWindows = BrowserWindow.getAllWindows()
+  if (allWindows.length) {
+    allWindows[0].focus()
+  } else {
+    pencere().then(() => {});
+  }
+})
