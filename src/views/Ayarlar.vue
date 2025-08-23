@@ -183,3 +183,80 @@ async function sonyedekTarihi(local:boolean){
     const sonuc = await ipcRenderer.invoke("son-yedek-tarihi", token.value, local);
     if (sonuc.durum){
       if(local) sonyedektarihi.value.local = unixToDate(sonuc.mesaj/1000);
+      else {
+        console.log(sonuc.tarih)
+        sonyedektarihi.value.remote = new Date(sonuc.tarih);
+      }
+    }
+    else {
+      if(local) sonyedektarihi.value.local = null;
+      else sonyedektarihi.value.remote = null;
+    }
+    if(sonyedektarihi.value.remote != null)sytStr.value.remote = "En son yedek alınma tarihi: "+trTamTarih(sonyedektarihi.value.remote);
+    else sytStr.value.remote="Hiç yedek alınmadı."
+    if(sonyedektarihi.value.local != null)sytStr.value.local = "En son yedek alınma tarihi: "+trTamTarih(sonyedektarihi.value.local);
+    else sytStr.value.local="Hiç yedek alınmadı."
+  }
+  islemvar.value = false;
+}
+
+onMounted(() => {
+  document.querySelectorAll(".modal-backdrop").forEach((element:Element) =>
+      element.remove()
+  );
+  if(sirketimDiv.value){
+    sirketimModal.value = new Modal(sirketimDiv.value,
+        { keyboard: false, backdrop: "static" });
+    sirketimModal.value.show();
+  }
+  sirketadi.value = iletisim.value.ayarlar.sirket;
+  uygulamasifresi.value = iletisim.value.ayarlar.sifre || "";
+  localyedek.value = iletisim.value.ayarlar.localyedek || false;
+  remoteyedek.value = iletisim.value.ayarlar.remoteyedek || false;
+  kilit.value = iletisim.value.ayarlar.kilit || false;
+  kullaniciAdi.value = iletisim.value.ayarlar.kullanici || "";
+  sifre.value = iletisim.value.ayarlar.sifre || "";
+  token.value = iletisim.value.ayarlar.token || "";
+  kurusDuzelt.value = iletisim.value.ayarlar.kurusDuzelt || false;
+  imajGoster.value = iletisim.value.ayarlar.imajGoster || false;
+
+  ipcRenderer.on("internet-response", (event, cevap) => {
+    islemvar.value = false;
+    if(cevap.durum) {
+      if(cevap.veri.sunucu) {
+        sonyedekTarihi(true);
+        sonyedekTarihi(false);
+      }
+      store.dispatch('iletisimDeposu/veriKaydet', { degisken: "internet", deger: cevap.veri.internet });
+      store.dispatch('iletisimDeposu/veriKaydet', { degisken: "sunucu", deger: cevap.veri.sunucu });
+      internetDurum.value = {"internet": cevap.veri.internet, "sunucu": cevap.veri.sunucu};
+    }
+  });
+  ipcRenderer.on("ayarlari-kaydet-response", (event, durum) => {
+    if(durum){
+      store.dispatch("iletisimDeposu/ayarKaydet", { degisken: "sirket", deger: sirketadi.value });
+      store.dispatch("iletisimDeposu/ayarKaydet", { degisken: "sifre", deger: uygulamasifresi.value });
+      store.dispatch("iletisimDeposu/ayarKaydet", { degisken: "localyedek", deger: localyedek.value  });
+      store.dispatch("iletisimDeposu/ayarKaydet", { degisken: "remoteyedek", deger: remoteyedek.value  });
+      store.dispatch("iletisimDeposu/ayarKaydet", { degisken: "kilit", deger: kilit.value });
+      store.dispatch("iletisimDeposu/ayarKaydet", { degisken: "kurusDuzelt", deger: kurusDuzelt.value });
+      store.dispatch("iletisimDeposu/ayarKaydet", { degisken: "imajGoster", deger: imajGoster.value });
+      sirketimModal.value.hide();
+      store.dispatch("iletisimDeposu/veriKaydet", { degisken: "ayarModalAcik", deger: false });
+      router.push("/bekle")
+    }else store.dispatch("bildirimDeposu/ekle", { tip: "danger", mesaj: "Ayarlar kaydedilemedi!" });
+  });
+  store.dispatch("iletisimDeposu/veriKaydet", {  degisken: "elemanlariayarla", deger: true  });
+  internetKontrol();
+  (async() => {
+    macID.value = await ipcRenderer.invoke("macid");
+  })();
+});
+onUnmounted(() => {
+  ipcRenderer.removeAllListeners('kontrol.internet-response')
+  ipcRenderer.removeAllListeners('ayar-kaydet-response')
+})
+watch(islemvar, (eski,yeni) => {
+  store.dispatch('iletisimDeposu/veriKaydet', { degisken: 'beklet', deger: !yeni });
+})
+</script>
