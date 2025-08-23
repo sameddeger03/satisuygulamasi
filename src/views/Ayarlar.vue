@@ -1,3 +1,94 @@
+<template>
+  <div class="modal" tabindex="-1" ref="sirketimDiv">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header d-flex justify-content-between">
+          <h5 class="modal-title">{{ $t('settings.title') }}</h5>
+        </div>
+        <div class="modal-body">
+          <div class="h-100 d-flex flex-column p-1" style="margin-right: 10px">
+            <div>
+              <div class="mb-3">
+                <label for="sirketadi" class="form-label">{{ $t('settings.companyName') }}:</label>
+                <input type="text" v-model="sirketadi" class="form-control" id="sirketadi">
+              </div>
+              <div class="mb-3">
+                <label for="uygulamasifresi" class="form-label">{{ $t('settings.appPassword') }}: (<span class="text-danger" data-bs-toggle="tooltip" data-bs-placement="top" :title="$t('settings.passwordHelp')">?</span>)</label>
+                <div class="input-group">
+                  <input :type="sifreGoster ? 'text' : 'password'" v-model="uygulamasifresi" class="form-control" id="uygulamasifresi" aria-describedby="sifregg">
+                  <button class="btn btn-secondary" type="button" id="sifregg" @click="sifreGoster = !sifreGoster">
+                    <i v-if="sifreGoster" class="bi bi-eye"></i>
+                    <i v-else class="bi bi-eye-slash"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="row border mb-2 p-2">
+                <b class="col-12 d-flex justify-content-center mb-2">
+                  {{ $t('settings.customization') }}
+                </b>
+                <div class="col-5">
+                  <div class="form-check">
+                    <input v-model="kurusDuzelt" class="form-check-input" type="checkbox" value="">
+                    <label class="form-check-label" for="flexCheckChecked">
+                      {{ $t('settings.currencyFix') }} (<span class="text-danger" data-bs-toggle="tooltip" data-bs-placement="top" :title="$t('settings.currencyFixHelp')">?</span>)
+                    </label>
+                  </div>
+                </div>
+                <div class="col-5">
+                  <div class="form-check">
+                    <input v-model="imajGoster" class="form-check-input" type="checkbox" value="">
+                    <label class="form-check-label" for="flexCheckChecked">
+                      {{ $t('settings.showImage') }} (<span class="text-danger" data-bs-toggle="tooltip" data-bs-placement="top" :title="$t('settings.showImageHelp')">?</span>)
+                    </label>
+                  </div>
+                </div>
+                <div class="col-5">
+                  <div class="form-check">
+                    <input v-model="kilit" class="form-check-input" type="checkbox" value="">
+                    <label class="form-check-label" for="flexCheckChecked">
+                      {{ $t('settings.autoLock') }} (<span class="text-danger" data-bs-toggle="tooltip" data-bs-placement="top" :title="$t('settings.autoLockHelp')">?</span>)
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="border mb-2 p-2 row">
+                <b class="col-12 d-flex justify-content-center mb-2">
+                  {{ $t('settings.backupSettings') }}
+                </b>
+                <div class="form-check">
+                  <input v-model="localyedek" class="form-check-input" type="checkbox" value="">
+                  <label class="form-check-label" for="flexCheckChecked">
+                    {{ $t('settings.localBackup') }} (<span class="text-danger" data-bs-toggle="tooltip" data-bs-placement="top" :title="$t('settings.localBackupHelp')">?</span>)
+                  </label>
+                </div>
+                <div class="form-check mt-3">
+                  <input v-model="remoteyedek" class="form-check-input" type="checkbox" value="">
+                  <label class="form-check-label" for="flexCheckChecked">
+                    {{ $t('settings.cloudBackup') }} (<span class="text-danger" data-bs-toggle="tooltip" data-bs-placement="top" :title="$t('settings.cloudBackupHelp')">?</span>)
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div class="d-flex justify-content-between w-100">
+              <div class="text-muted my-auto" style="font-size:8px">
+                ID:<br>
+                {{macID}}
+              </div>
+              <div>
+                <button type="button" class="btn btn-sm btn-secondary" @click="kapat">{{ $t('common.cancel') }}</button>
+                <button type="button" class="btn btn-sm btn-primary ms-2" @click="kaydet">{{ $t('common.save') }}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import {onMounted, onUnmounted, ref, computed, watch} from 'vue';
 import { useStore } from 'vuex';
@@ -169,94 +260,3 @@ watch(islemvar, (eski,yeni) => {
   store.dispatch('iletisimDeposu/veriKaydet', { degisken: 'beklet', deger: !yeni });
 })
 </script>
-<template>
-  <div class="modal" tabindex="-1" ref="sirketimDiv">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header d-flex justify-content-between">
-          <h5 class="modal-title">Ayarlar</h5>
-
-        </div>
-        <div class="modal-body">
-          <div class="h-100 d-flex flex-column p-1" style="margin-right: 10px">
-            <div>
-              <div class="mb-3">
-                <label for="sirketadi"  class="form-label">Şirket Adı:</label>
-                <input type="text" v-model="sirketadi" class="form-control" id="sirketadi">
-              </div>
-              <div class="mb-3">
-                <label for="uygulamasifresi"  class="form-label">Uygulama Şifresi: (<span class="text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Eğer şifre koyarsanız uygulama başlangıcında şifre sorar. Ayrıca otomatik kilitle seçeneği aktif ise şifre sorar. Boş bırakabilirsiniz.">?</span>)</label>
-                <div class="input-group">
-                  <input :type="sifreGoster ? 'text' : 'password'" v-model="uygulamasifresi" class="form-control" id="uygulamasifresi" aria-describedby="sifregg">
-                  <button class="btn btn-secondary" type="button" id="sifregg" @click="sifreGoster = !sifreGoster">
-                    <i v-if="sifreGoster" class="bi bi-eye"></i>
-                    <i v-else class="bi bi-eye-slash"></i>
-                  </button>
-                </div>
-              </div>
-
-              <div class="row border mb-2 p-2">
-                <b class="col-12 d-flex justify-content-center mb-2">
-                  Özelleştirme
-                </b>
-                <div class="col-5">
-                  <div class="form-check">
-                    <input v-model="kurusDuzelt" class="form-check-input" type="checkbox" value="">
-                    <label class="form-check-label" for="flexCheckChecked">
-                      Kuruş Düzelt (<span class="text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Ödeme ekranında toplam değerde kuruş 5'in katları şeklinde ilerler.">?</span>)
-                    </label>
-                  </div>
-                </div>
-                <div class="col-5">
-                  <div class="form-check">
-                    <input v-model="imajGoster" class="form-check-input" type="checkbox" value="">
-                    <label class="form-check-label" for="flexCheckChecked">
-                      İmaj Göster (<span class="text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Hızlı seçim bölümünde ürünün fotoğrafını gösterir.">?</span>)
-                    </label>
-                  </div>
-                </div>
-                <div class="col-5">
-                  <div class="form-check">
-                    <input v-model="kilit" class="form-check-input" type="checkbox" value="">
-                    <label class="form-check-label" for="flexCheckChecked">
-                      Otamatik Kilitle (<span class="text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="10 dakika boyunca bir eylemde bulunmazsanız kilit ekranını gösterir.">?</span>)
-                    </label>
-                  </div>
-                </div>
-              </div>
-              <div class="border mb-2 p-2 row">
-                <b class="col-12 d-flex justify-content-center mb-2">
-                  Yedekleme Ayarları
-                </b>
-                <div class="form-check">
-                  <input v-model="localyedek" class="form-check-input" type="checkbox" value="">
-                  <label class="form-check-label" for="flexCheckChecked">
-                    Bu Cihaza Yedek Oluştur (Önerilir) (<span class="text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Belgelerim klasörünüze saat başı yedek oluşturur. Alınan yedeği elle yükleyerek kullanabilirsiniz.">?</span>)
-                  </label>
-                </div>
-                <div class="form-check mt-3">
-                  <input v-model="remoteyedek" class="form-check-input" type="checkbox" value="">
-                  <label class="form-check-label" for="flexCheckChecked">
-                    Bulut Hesabına Yedek Oluştur (<span class="text-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Eğer Rovave hesabınız var ise yedeklerinizi uzak sunucuya kaydedebilirsiniz. İstediğiniz zaman indirebilirsiniz.">?</span>)
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <div class="d-flex justify-content-between w-100">
-              <div class="text-muted my-auto" style="font-size:8px">
-                ID:<br>
-                {{macID}}
-              </div>
-              <div>
-                <button type="button" class="btn btn-sm btn-secondary" @click="kapat">Vazgeç</button>
-                <button type="button" class="btn btn-sm btn-primary ms-2" @click="kaydet">Kaydet</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
