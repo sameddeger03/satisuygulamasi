@@ -5,6 +5,9 @@ import {Odeme, Cevap, Urun} from "@interfaces/index";
 import {mpen, sqlTarih, sqlTarihSaatsiz, ToLowerCaseTR, turklirasi, uidolustur} from "@kutuphane/index";
 import {useStore} from "vuex";
 import {Modal} from "bootstrap";
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const store = useStore();
 
 const odemeler = ref<Odeme[]>([]);
@@ -125,19 +128,19 @@ function listele(response: Cevap) {
   },100)
   islemvar.value = false;
 }
+
 function odemeSil_onay(id: number) {
   iptalID.value = id;
   if(iletisim.value.onaymodali)
-    iletisim.value.onaymodali.onayAl('Ödeme Silinecek', '' +
+    iletisim.value.onaymodali.onayAl(
+        t('payments.deleteConfirm'),
         '<div class="alert alert-danger  p-1" role="alert">\n' +
-        '  <div class="d-flex align-items-center gap-1 border border-danger rounded p-1"><i class="bi bi-exclamation-triangle-fill"/></i> <span> Bu işlem önerilmiyor.</span></div>\n' +
-        '  <div style="font-size: 14px">\n' +
-        '    Eğer ödeme silinirse geçmişe ait raporlar değişir. Bu durum rapor sisteminin hatalı bırakmasına sebep olabilir.\n' +
-        '  </div>\n' +
+        '  <div class="d-flex align-items-center gap-1 border border-danger rounded p-1"><i class="bi bi-exclamation-triangle-fill"/></i> <span>' + t('payments.deleteWarning') + '</span></div>\n' +
         '</div>' +
-        '' +
-        'Seçtiğiniz ödemeyi silmek istediğinizden emin misiniz?', odemeSil);
+        t('payments.deleteMessage'),
+        odemeSil);
 }
+
 function odemeSil() {
   islemvar.value = true;
   const index = odemeler.value.findIndex(odeme => odeme.id === iptalID.value);
@@ -188,17 +191,18 @@ function odemeIade(id: number, index: number) {
 }
 
 function iadeOnay() {
-  iletisim.value.onaymodali.onayAl('İade Elicek', 'Seçtiğiniz ürünler iade edilecek. Devam etmek istiyor musunuz?', () => {
-    iadeOlustur();
-  });
-
+  iletisim.value.onaymodali.onayAl(
+      t('payments.refundTitle2'),
+      t('payments.refundConfirm'),
+      () => {
+        iadeOlustur();
+      });
 }
 
 function iadeOlustur(){
   islemvar.value = true;
   ipcRenderer.send('odeme-iade', iptalID.value, JSON.parse(JSON.stringify(iadelist.value)), iptalNeden.value);
 }
-
 
 onMounted(() => {
   secilenTarih.value = (iletisim.value.odemeListesiTarih) as Date || new Date();
@@ -254,6 +258,7 @@ function yerDegistir(nerden:string, nereye:string) {
     checkbox.checked = false;
   });
 }
+
 function secimalani(neresi:string){
   if (neresi === 'urunler')
     neresi = 'iadeler';
@@ -264,6 +269,7 @@ function secimalani(neresi:string){
     checkbox.checked = false;
   });
 }
+
 function tarihDegisti(e:Event){
   islemvar.value = true;
   secilenTarih.value = new Date((e.target as HTMLInputElement).value);
@@ -274,42 +280,42 @@ function tarihDegisti(e:Event){
 
 <template>
   <div class="d-flex justify-content-between align-items-center">
-    <h2>Yapılan Ödemeler </h2>
+    <h2>{{ $t('payments.title') }} </h2>
   </div>
   <div class="border p-2" >
     <div class="d-flex justify-content-between align-items-center">
       <input type="date" class="form-control me-2"
         @change="tarihDegisti" :value="sqlTarihSaatsiz(secilenTarih)" :max="sqlTarihSaatsiz(new Date())"  />
       <select ref="odemeTurFInput" :disabled="islemvar" class="form-select  me-2" @change="odemeFiltrele">
-        <option selected value="1">Tümü</option>
-        <option value="2">Nakit Ödeme</option>
-        <option value="3">Kart Ödemesi</option>
+        <option selected value="1">{{ $t('payments.all') }}</option>
+        <option value="2">{{ $t('payments.cashPayment') }}</option>
+        <option value="3">{{ $t('payments.cardPayment') }}</option>
       </select>
-      <input @keyup="odemeFiltrele" ref="icerikFInput" :disabled="islemvar" type="text" class="form-control me-2" placeholder="Herhangi ürün adı ya da barkodu" />
-      <input @keyup="odemeFiltrele" ref="kazancMinFInput" :disabled="islemvar" type="number" step="0.01" class="form-control me-2" placeholder="Min. Kazanç" />
-      <input @keyup="odemeFiltrele" ref="kazancMaxFInput" :disabled="islemvar" type="number" step="0.01" class="form-control me-2" placeholder="Max. Kazanç" />
-      <button :disabled="islemvar" class="btn btn-primary" @click="filtreTemizle">Temizle</button>
+      <input @keyup="odemeFiltrele" ref="icerikFInput" :disabled="islemvar" type="text" class="form-control me-2" :placeholder="$t('payments.searchPlaceholder')" />
+      <input @keyup="odemeFiltrele" ref="kazancMinFInput" :disabled="islemvar" type="number" step="0.01" class="form-control me-2" :placeholder="$t('payments.minEarning')" />
+      <input @keyup="odemeFiltrele" ref="kazancMaxFInput" :disabled="islemvar" type="number" step="0.01" class="form-control me-2" :placeholder="$t('payments.maxEarning')" />
+      <button :disabled="islemvar" class="btn btn-primary" @click="filtreTemizle">{{ $t('common.clear') }}</button>
     </div>
   </div>
 
   <div v-if="odemebos" class="alert alert-danger mt-2">
-    Seçilen tarih için hiç ödeme kaydedilmemiş.
+    {{ $t('payments.noPayments') }}
   </div>
   <div v-else class="overflow-auto mt-3" style="max-height:85%">
     <table  class="table table-striped table-bordered table-sm">
       <thead>
       <tr>
-        <th scope="col" style="width: 3%">Tür</th>
-        <th scope="col" style="width: 60%">İçerdiği Ürünler</th>
-        <th scope="col" style="width: 20%">Kaydedilme Zamanı</th>
-        <th scope="col" style="width: 10%">Kazanç</th>
-        <th scope="col" style="width: 5%">İşlem</th>
+        <th scope="col" style="width: 3%">{{ $t('payments.type') }}</th>
+        <th scope="col" style="width: 60%">{{ $t('payments.containedProducts') }}</th>
+        <th scope="col" style="width: 20%">{{ $t('payments.recordTime') }}</th>
+        <th scope="col" style="width: 10%">{{ $t('payments.earning') }}</th>
+        <th scope="col" style="width: 5%">{{ $t('categories.action') }}</th>
       </tr>
       </thead>
       <tbody >
       <tr v-for="(odeme,index) in filteredItems" :class="odeme.iptal?'table-danger':'table-white'">
         <td class="align-middle text-center"  >
-          <span data-bs-toggle="tooltip" data-bs-placement="top" :title="odeme.odeme?'Nakit Ödeme':'Kredi Kartı Ödemesi'" :class="odeme.odeme?'text-success':'text-info'">
+          <span data-bs-toggle="tooltip" data-bs-placement="top" :title="odeme.odeme?$t('payments.cashPayment'):$t('payments.cardPayment')" :class="odeme.odeme?'text-success':'text-info'">
             <i v-if="odeme.odeme" class="bi bi-cash-coin"></i>
             <i v-else class="bi bi-credit-card"></i>
           </span>
@@ -335,36 +341,36 @@ function tarihDegisti(e:Event){
     <div class="modal-dialog modal-lg modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">İade Oluşturma</h5>
+          <h5 class="modal-title">{{ $t('payments.refundTitle') }}</h5>
         </div>
         <div class="modal-body">
-          <p>İade Nedeni </p>
+          <p>{{ $t('payments.refundReason') }} </p>
           <textarea  class="form-control" v-model="iptalNeden" ></textarea>
           <div class="row my-4">
-            <div class="col-12 d-flex align-items-center justify-content-center p-2 fs-5">Lütfen iade edilecek ürunleri seçiniz.</div>
+            <div class="col-12 d-flex align-items-center justify-content-center p-2 fs-5">{{ $t('payments.selectProducts') }}</div>
             <div class="col-5">
               <div class="list-group" id="urunler">
-                <a class="list-group-item active">Ödemesi yapılan ürünler <input title="Tümünü seç" type="checkbox" @change="(event)=>{if(event.target) hepsinisec('urunler', (event.target as HTMLInputElement).checked)}" class="float-end"></a>
-                <a v-if="!urunlist.length" class="list-group-item">İade edilebilecek ürün yok.</a>
+                <a class="list-group-item active">{{ $t('payments.paidProducts') }} <input :title="$t('payments.selectAll')" type="checkbox" @change="(event)=>{if(event.target) hepsinisec('urunler', (event.target as HTMLInputElement).checked)}" class="float-end"></a>
+                <a v-if="!urunlist.length" class="list-group-item">{{ $t('payments.noRefundableProducts') }}</a>
                 <a class="list-group-item" v-for="urun in urunlist" :key="urun.uid" :data-uid="urun.uid">{{urun.isim}}<input @change="()=>{secimalani('urunler')}" type="checkbox" class="float-end"></a>
               </div>
             </div>
             <div class="col-2 d-flex flex-column justify-content-center gap-3">
-              <button title="İade Et" class="btn btn-primary" @click="yerDegistir('urunler','iadeler')"><i class="bi bi-arrow-right"></i></button>
-              <button title="Geri Al" class="btn btn-primary" @click="yerDegistir('iadeler','urunler')"><i class="bi bi-arrow-left"></i></button>
+              <button :title="$t('payments.createRefund')" class="btn btn-primary" @click="yerDegistir('urunler','iadeler')"><i class="bi bi-arrow-right"></i></button>
+              <button :title="$t('common.back')" class="btn btn-primary" @click="yerDegistir('iadeler','urunler')"><i class="bi bi-arrow-left"></i></button>
             </div>
             <div class="col-5">
               <div class="list-group" id="iadeler">
-                <a class="list-group-item active">İade edilecek ürünler: <input title="Tümünü seç" type="checkbox" @change="(event)=>{if(event.target) hepsinisec('iadeler', (event.target as HTMLInputElement).checked)}" class="float-end"></a>
-                <a v-if="iadelist.length==0" class="list-group-item">Ürün ekleyin.</a>
+                <a class="list-group-item active">{{ $t('payments.refundProducts') }} <input :title="$t('payments.selectAll')" type="checkbox" @change="(event)=>{if(event.target) hepsinisec('iadeler', (event.target as HTMLInputElement).checked)}" class="float-end"></a>
+                <a v-if="iadelist.length==0" class="list-group-item">{{ $t('payments.addProducts') }}</a>
                 <a class="list-group-item" v-for="urun in iadelist" :key="urun.uid" :data-uid="urun.uid">{{urun.isim}}<input @change="()=>{secimalani('urunler')}" type="checkbox" class="float-end"></a>
               </div>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="()=>{mpen.kapat('nedenModal')}">Vazgeç</button>
-          <button :disabled="iadelist.length==0" type="button" class="btn btn-danger" @click="iadeOnay" >İade Oluştur</button>
+          <button type="button" class="btn btn-secondary" @click="()=>{mpen.kapat('nedenModal')}">{{ $t('common.cancel') }}</button>
+          <button :disabled="iadelist.length==0" type="button" class="btn btn-danger" @click="iadeOnay" >{{ $t('payments.createRefund') }}</button>
         </div>
       </div>
     </div>
