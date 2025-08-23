@@ -1,15 +1,15 @@
 <template>
   <div class="page-content p-2 bg-light" style="height: 100%; width: 100%">
     <div class="alert alert-secondary d-flex justify-content-between align-items-center p-2">
-      <h4 class="d-flex my-auto flex-column align-content-center justify-content-center h-100">Notlar</h4>
-      <button class="btn btn-sm btn-primary my-auto" @click="yeniNot">Yeni Not Ekle</button>
+      <h4 class="d-flex my-auto flex-column align-content-center justify-content-center h-100">{{ $t('notes.title') }}</h4>
+      <button class="btn btn-sm btn-primary my-auto" @click="yeniNot">{{ $t('notes.addNew') }}</button>
     </div>
     <div class="notlar " style="overflow-y: auto; height: 90%;max-height: 90%;">
       <div class="w-100 h-100 d-flex flex-column align-content-center justify-content-center" v-if="islemvar && notlar.length == 0">
-        <h3 class="text-center">Notlar yükleniyor...</h3>
+        <h3 class="text-center">{{ $t('notes.loading') }}</h3>
       </div>
       <div class="w-100 h-100 d-flex flex-column align-content-center justify-content-center" v-else-if="notlar.length == 0">
-        <h3 class="text-center">Hiç not eklenmemiş.</h3>
+        <h3 class="text-center">{{ $t('notes.noNotes') }}</h3>
       </div>
       <div v-else class="container">
         <div class="row">
@@ -28,7 +28,7 @@
                 <textarea @keyup="()=>{notuKaydet(not,null)}" class="form-control h-100" v-model="not.mesaj" style="resize: none; "></textarea>
               </div>
               <div class="card-footer">
-                <span class="tarih text-muted">{{formatTarih(not.tarih)}} değiştirildi.</span>
+                <span class="tarih text-muted">{{formatTarih(not.tarih)}} {{ $t('notes.modified') }}</span>
               </div>
             </div>
           </div>
@@ -45,7 +45,9 @@ import {formatTarih} from '@kutuphane/index';
 import {onMounted, onUnmounted, ref, watch} from "vue";
 import {sqlTarih, renkuydur, objele} from "@kutuphane/index";
 import {useStore} from "vuex";
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const store = useStore();
 const notlar = ref<Note[]>([]);
 const islemvar = ref(true);
@@ -61,8 +63,8 @@ function yeniNot(){
   islemvar.value = true;
   const not:Note = {
     id: null,
-    baslik: "Başlıksız",
-    mesaj: "Yeni Not",
+    baslik: t('notes.untitled'),
+    mesaj: t('notes.newNote'),
     renk: renkuydur(),
     tarih: sqlTarih(),
     sil: false
