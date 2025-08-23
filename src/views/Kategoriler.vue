@@ -180,31 +180,31 @@ watch(islemvar, (eski,yeni) => {
 </script>
 <template>
   <div class="d-flex justify-content-between align-items-center">
-    <h2>Kategori Listesi </h2>
+    <h2>{{ $t('categories.title') }} </h2>
     <button
         class="btn btn-primary"
         aria-controls="yeniKategoriEkle"
         @click="kategoriEkleFormDoldur"
     >
-      Yeni Kategori Ekle
+      {{ $t('categories.addNew') }}
     </button>
   </div>
   <div class="border p-2" >
     <div class="d-flex justify-content-between align-items-center">
-      <input @keyup="kategoriFiltrele" v-model="listeFilitre.isim" :disabled="islemvar" type="text" class="form-control me-2" placeholder="Kategori adı" />
-      <button :disabled="islemvar" class="btn btn-primary" @click="filtreTemizle">Temizle</button>
+      <input @keyup="kategoriFiltrele" v-model="listeFilitre.isim" :disabled="islemvar" type="text" class="form-control me-2" :placeholder="$t('categories.name')" />
+      <button :disabled="islemvar" class="btn btn-primary" @click="filtreTemizle">{{ $t('common.clear') }}</button>
     </div>
   </div>
 
   <div v-if="filteredItems.length == 0" class="alert alert-danger mt-2">
-    Hiç kategori eklenmemiş.
+    {{ $t('categories.noCategories') }}
   </div>
   <div v-else class="overflow-auto mt-3" style="max-height: 85%;">
   <table  class="table table-striped table-bordered table-sm">
     <thead>
     <tr>
-      <th scope="col" class="col-11">Kategori Adı</th>
-      <th scope="col" class="col-1">İşlem</th>
+      <th scope="col" class="col-11">{{ $t('categories.name') }}</th>
+      <th scope="col" class="col-1">{{ $t('categories.action') }}</th>
     </tr>
     </thead>
     <tbody >
@@ -228,24 +228,21 @@ watch(islemvar, (eski,yeni) => {
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 v-if="kategoriModalTip=='ekle'" class="modal-title" id="kategoriEkleModalLabel">Yeni Kategori Ekle</h5>
-          <h5 v-if="kategoriModalTip=='duzenle'" class="modal-title" id="kategoriDuzenleModalLabel"> <span class="w-100">Kategori Güncelleme</span> <span class="text-primary fs-6">{{ duzenlenenKategori.isim }}</span></h5>
+          <h5 v-if="kategoriModalTip=='ekle'" class="modal-title" id="kategoriEkleModalLabel">{{ $t('categories.addTitle') }}</h5>
+          <h5 v-if="kategoriModalTip=='duzenle'" class="modal-title" id="kategoriDuzenleModalLabel"> <span class="w-100">{{ $t('categories.editTitle') }}</span> <span class="text-primary fs-6">{{ duzenlenenKategori.isim }}</span></h5>
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label class="form-label">Kategori Adı</label>
+            <label class="form-label">{{ $t('categories.name') }}</label>
             <input v-model="duzenlenenKategori.isim"  :disabled="islemvar" type="text" class="form-control me-2" />
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" data-bs-dismiss="modal" @click="()=>{mpen.kapat('kategoriModal'); kategoriModalTip = ''}">Vazgeç</button>
-          <button v-if="kategoriModalTip=='ekle'" class="btn btn-primary" :disabled="islemvar" @click="kategoriEkle" >Oluştur</button>
-          <button v-if="kategoriModalTip=='duzenle'" class="btn btn-primary" :disabled="islemvar" @click="kategoriDuzenle" data-bs-dismiss="modal" >Kaydet</button>
+          <button class="btn btn-secondary" data-bs-dismiss="modal" @click="()=>{mpen.kapat('kategoriModal'); kategoriModalTip = ''}">{{ $t('common.cancel') }}</button>
+          <button v-if="kategoriModalTip=='ekle'" class="btn btn-primary" :disabled="islemvar" @click="kategoriEkle" >{{ $t('categories.create') }}</button>
+          <button v-if="kategoriModalTip=='duzenle'" class="btn btn-primary" :disabled="islemvar" @click="kategoriDuzenle" data-bs-dismiss="modal" >{{ $t('common.save') }}</button>
         </div>
       </div>
     </div>
   </div>
 </template>
-
-
-
